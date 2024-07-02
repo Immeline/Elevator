@@ -19,7 +19,7 @@ namespace Elevator
 
 		public override void Entry(IModHelper helper)
 		{
-			ElevatorBuildingTexture = helper.GameContent.Load<Texture2D>("Hotel.png");//Must be before PatchAll
+			ElevatorBuildingTexture = helper.ModContent.Load<Texture2D>("Hotel.png");//Must be before PatchAll
 			
 			//Harmony patch everything
 			Patch.PatchAll(this.ModManifest.UniqueID);
