@@ -1,6 +1,6 @@
 # Elevator
 ## Unofficial Update by Immeline
-### Fixed to compile and load, not tested yet.
+### Fixed to compile and load on Stardew Valley 1.6 and SMAPI 4.08, not tested yet.
 
 ![Hotel image](https://dl.dropboxusercontent.com/s/jvfdw477hvbd2eb/Hotel3.png)
 
