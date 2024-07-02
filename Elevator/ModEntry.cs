@@ -19,7 +19,7 @@ namespace Elevator
 
 		public override void Entry(IModHelper helper)
 		{
-			ElevatorBuildingTexture = helper.Content.Load<Texture2D>("Hotel.png");//Must be before PatchAll
+			ElevatorBuildingTexture = helper.GameContent.Load<Texture2D>("Hotel.png");//Must be before PatchAll
 			
 			//Harmony patch everything
 			Patch.PatchAll(this.ModManifest.UniqueID);
@@ -50,7 +50,7 @@ namespace Elevator
 			
 			Helper.Events.Player.Warped += (o, e) =>
 			{
-				if (Game1.player.getTileX() <= -9000)//The door position is a bit to the right of -10000
+				if (Game1.player.getStandingPosition().X <= -9000)//The door position is a bit to the right of -10000
 				{
 					//Something broke: this seems to happen when a cabin has been upgraded
 					var d = CabinHelper.GetDoorPositionOfFirstElevatorBuilding();
@@ -196,11 +196,11 @@ namespace Elevator
 
 						targetBuilding.GetType()
 						   .GetField("tileX", BindingFlags.Instance | BindingFlags.Public)//tileX is readonly
-						   .SetValue(targetBuilding, new NetInt(Game1.player.getTileX()));
+						   .SetValue(targetBuilding, new NetInt((int)Game1.player.getStandingPosition().X));
 
 						targetBuilding.GetType()
 						   .GetField("tileY", BindingFlags.Instance | BindingFlags.Public)//tileY is readonly
-						   .SetValue(targetBuilding, new NetInt(Game1.player.getTileY() - 1));
+						   .SetValue(targetBuilding, new NetInt((int)Game1.player.getStandingPosition().Y - 1));
 
 						foreach (var warp in cabin.warps)
 						{
@@ -242,9 +242,9 @@ namespace Elevator
 
 			foreach(Cabin cabin in CabinHelper.GetCabinsInsides())
 			{
-				if (cabin.getFarmhand().Value.Name.Length == 0)
+				if (cabin.farmhandReference.Value.Name.Length == 0)
 				{
-					toRemove.Add(CabinHelper.FindCabinOutside(cabin.getFarmhand()));
+					toRemove.Add(CabinHelper.FindCabinOutside(cabin.farmhandReference.Value));
 					
 				}
 			}

@@ -15,11 +15,11 @@ namespace Elevator
 		{
 			foreach (Cabin item in GetCabinsInsides())
 			{
-				if (item.getFarmhand().Value.UniqueMultiplayerID == farmhand.UniqueMultiplayerID)
+				if (item.farmhandReference.Value.UniqueMultiplayerID == farmhand.UniqueMultiplayerID)
 				{
 					return item;
 				}
-			}
+            }
 			return null;
 		}
 
@@ -27,7 +27,7 @@ namespace Elevator
 		{
 			foreach (Building item in GetCabinsOutsides())
 			{
-				if ((item.indoors.Value as Cabin)?.getFarmhand().Value.UniqueMultiplayerID == farmhand.UniqueMultiplayerID)
+				if ((item.indoors.Value as Cabin)?.farmhandReference.Value.UniqueMultiplayerID == farmhand.UniqueMultiplayerID)
 					return item;
 			}
 			return null;
@@ -58,7 +58,7 @@ namespace Elevator
 		public static void AddNewCabin(int type = 3)
 		{
 			//"Stone Cabin"/"Plank Cabin"/"Log Cabin"
-			var blueprint = new BluePrint(type == 1 ? "Stone Cabin" : type == 2 ? "Plank Cabin" : "Log Cabin");
+			var blueprint = /*new BluePrint(*/type == 1 ? "Stone Cabin" : type == 2 ? "Plank Cabin" : "Log Cabin"/*)*/;
 			var building = new Building(blueprint, new Vector2(-10000, 0));
 			Game1.getFarm().buildings.Add(building);
 			
@@ -73,15 +73,16 @@ namespace Elevator
 
 		public static void SpawnElevatorBuilding()
 		{
-			var blueprint = new BluePrint("Shed")
-			{
-				daysToConstruct = 0,
-				magical = true,
+			var blueprint = "Shed";
+			//{
+			//	daysToConstruct = 0,
+			//	magical = true,
 
-				tilesWidth = ModEntry.ElevatorBuildingTexture.Width / 16
-			};
+			//	tilesWidth = ModEntry.ElevatorBuildingTexture.Width / 16
+			//};
 
-			var building = new Building(blueprint, new Vector2(Game1.player.getTileX(), Game1.player.getTileY()));
+			//var building = new Building(blueprint, new Vector2(Game1.player.getTileX(), Game1.player.getTileY()));
+			var building = new Building(blueprint, Game1.player.getStandingPosition());
 
 			//Use this to set it apart from an actual shed (UPDATE: see IsElevatorBuilding instead)
 			building.indoors.Value.GetType()
@@ -100,7 +101,8 @@ namespace Elevator
 
 		public static bool IsElevatorBuilding(Building building)
 		{
-			return (building.nameOfIndoors == "ElevatorBuilding") || (building.indoors.Value is Shed && building.tilesWide.Value == ModEntry.ElevatorBuildingTexture.Width / 16);
+			//return (building.nameOfIndoors == "ElevatorBuilding") || (building.indoors.Value is Shed && building.tilesWide.Value == ModEntry.ElevatorBuildingTexture.Width / 16);
+			return (building.GetIndoorsName() == "ElevatorBuilding") || (building.indoors.Value is Shed && building.tilesWide.Value == ModEntry.ElevatorBuildingTexture.Width / 16);
 		}
 
 		public static Point GetDoorPositionOfFirstElevatorBuilding()

@@ -33,7 +33,7 @@ namespace Elevator
 
 				//indoors.Value.isStructure.Value = true;
 
-				who.currentLocation.playSoundAt("crystal", tileLocation);
+				who.currentLocation.playSound("crystal", tileLocation);
 
 				if (Game1.activeClickableMenu == null)
 					Game1.activeClickableMenu = new ElevatorMenu();
