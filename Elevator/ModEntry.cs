@@ -20,6 +20,7 @@ namespace Elevator
 		public override void Entry(IModHelper helper)
 		{
 			ElevatorBuildingTexture = helper.ModContent.Load<Texture2D>("Hotel.png");//Must be before PatchAll
+			//helper.ModContent.
 			
 			//Harmony patch everything
 			Patch.PatchAll(this.ModManifest.UniqueID);
@@ -65,7 +66,10 @@ namespace Elevator
 				if (CabinHelper.IsElevatorBuilding(building))
 				{
 					Monitor.Log("(Re)loading an elevator building texture");
-					building.resetTexture();//Otherwise the clients will just see a shed
+					building.paintedTexture = ElevatorBuildingTexture;
+					building.texture = new System.Lazy<Texture2D>(ElevatorBuildingTexture);
+                    //building.resetTexture();//Otherwise the clients will just see a shed
+					var name = building.textureName();
 				}
 		}
 

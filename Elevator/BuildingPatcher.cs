@@ -51,7 +51,7 @@ namespace Elevator
 		{
 			if (CabinHelper.IsElevatorBuilding(__instance))
 			{
-				__instance.texture = new Lazy<Texture2D>(() => ModEntry.ElevatorBuildingTexture );
+				__instance.texture = new Lazy<Texture2D>(ModEntry.ElevatorBuildingTexture);
 				return false;
 			}
 			return true;

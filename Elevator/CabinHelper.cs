@@ -6,6 +6,8 @@ using StardewValley.Locations;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Elevator
 {
@@ -58,12 +60,17 @@ namespace Elevator
 		public static void AddNewCabin(int type = 3)
 		{
 			//"Stone Cabin"/"Plank Cabin"/"Log Cabin"
-			var blueprint = /*new BluePrint(*/type == 1 ? "Stone Cabin" : type == 2 ? "Plank Cabin" : "Log Cabin"/*)*/;
-			var building = new Building(blueprint, new Vector2(-10000, 0));
-			Game1.getFarm().buildings.Add(building);
-			
+			var blueprint = "Cabin";
+			//var blueprint = /*new BluePrint(*/type == 1 ? "Stone Cabin" : type == 2 ? "Plank Cabin" : "Log Cabin"/*)*/;
+			var building = Building.CreateInstanceFromId(blueprint, new Vector2(-10000, 0));
+            building.load();
+            building.FinishConstruction();
+			building.InitializeIndoor(building.GetData(), false, false);
+            //building.isCabin = true;
+            Game1.getFarm().buildings.Add(building);
 
-			foreach (var warp in building.indoors.Value.warps)
+
+            foreach (var warp in building.GetIndoors().warps)
 			{
 				var d = GetDoorPositionOfFirstElevatorBuilding();
 				warp.TargetX = d.X;
@@ -74,34 +81,73 @@ namespace Elevator
 		public static void SpawnElevatorBuilding()
 		{
 			var blueprint = "Shed";
-			//{
-			//	daysToConstruct = 0,
-			//	magical = true,
+            //{
+            //	daysToConstruct = 0,
+            //	magical = true,
 
-			//	tilesWidth = ModEntry.ElevatorBuildingTexture.Width / 16
-			//};
+            //	tilesWidth = ModEntry.ElevatorBuildingTexture.Width / 16
+            //};
 
-			//var building = new Building(blueprint, new Vector2(Game1.player.getTileX(), Game1.player.getTileY()));
-			var building = new Building(blueprint, Game1.player.getStandingPosition());
 
-			//Use this to set it apart from an actual shed (UPDATE: see IsElevatorBuilding instead)
-			building.indoors.Value.GetType()
-					.GetField("uniqueName", BindingFlags.Instance | BindingFlags.Public)//readonly
-					.SetValue(building.indoors.Value, new NetString("ElevatorBuilding"));//Don't set this in the blueprint or it will try to load an XNB "ElevatorBuilding"
+            //var building = new Building(blueprint, new Vector2(Game1.player.getTileX(), Game1.player.getTileY()));
+            /*var*/
 
-			//building.humanDoor
-			building.GetType()
-					.GetField("humanDoor", BindingFlags.Instance | BindingFlags.Public)//readonly
-					.SetValue(building, new NetPoint(new Point(building.humanDoor.Value.X + 2, building.humanDoor.Value.Y)));
+            //if (Game1.currentLocation.buildStructure(command[1], (command.Length > 3) ? new Vector2(Convert.ToInt32(command[2]), Convert.ToInt32(command[3])) : new Vector2(Game1.player.TilePoint.X + 1, Game1.player.TilePoint.Y), Game1.player, out var constructed))
+            //{
+            //    constructed.daysOfConstructionLeft.Value = 0;
+            //}
+            //        foreach (Building b in Game1.getFarm().buildings)
+            //        {
+            //if (CabinHelper.IsElevatorBuilding(b))
+            //{
+            //                b.resetTexture();
+            //                building = b;
 
-			building.resetTexture();
+            //            }
+            //	//{
+            //	//	//b.
 
-			Game1.getFarm().buildings.Add(building);			
-		}
+            //            //}
+            //        }
+            var building = Building.CreateInstanceFromId(blueprint, Game1.player.getStandingPosition());
+            //Game1.getFarm().buildings.Add(building);
+            //building.load();
+
+
+			//building.InitializeIndoor(building.GetData(), false, false);
+            //Use this to set it apart from an actual shed (UPDATE: see IsElevatorBuilding instead)
+
+
+            //building.resetTexture();
+            //var test = building.isThereAnythingtoPreventConstruction(Game1.getFarm(), Game1.player.getStandingPosition());
+            if (Game1.currentLocation.buildStructure(blueprint, new Vector2(Game1.player.TilePoint.X + 1, Game1.player.TilePoint.Y), Game1.player, out building, false, true))
+            {
+				building.tilesWide.Value = ModEntry.ElevatorBuildingTexture.Width / 16;
+                building.daysOfConstructionLeft.Value = 0;
+				building.paintedTexture = ModEntry.ElevatorBuildingTexture;
+				building.texture = new System.Lazy<Texture2D>(ModEntry.ElevatorBuildingTexture);
+				building.magical.Value = true;
+				building.indoors.Value.GetType()
+						.GetField("uniqueName", BindingFlags.Instance | BindingFlags.Public)//readonly
+						.SetValue(building.indoors.Value, new NetString("ElevatorBuilding"));//Don't set this in the blueprint or it will try to load an XNB "ElevatorBuilding"
+
+                //building.humanDoor
+                building.GetType()
+                        .GetField("humanDoor", BindingFlags.Instance | BindingFlags.Public)//readonly
+                        .SetValue(building, new NetPoint(new Point(building.humanDoor.Value.X + 2, building.humanDoor.Value.Y)));
+            }
+            //building.FinishConstruction();
+            //building.FinishConstruction();
+
+
+			//var hasIndoors = building.HasIndoors();
+			//var hasIndoorsName = building.HasIndoorsName("ElevatorBuilding");
+        }
 
 		public static bool IsElevatorBuilding(Building building)
 		{
 			//return (building.nameOfIndoors == "ElevatorBuilding") || (building.indoors.Value is Shed && building.tilesWide.Value == ModEntry.ElevatorBuildingTexture.Width / 16);
+			//return (building.GetIndoorsName() == "ElevatorBuilding") || (building.indoors.Value is Shed);
 			return (building.GetIndoorsName() == "ElevatorBuilding") || (building.indoors.Value is Shed && building.tilesWide.Value == ModEntry.ElevatorBuildingTexture.Width / 16);
 		}
 
