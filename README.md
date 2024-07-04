@@ -1,6 +1,6 @@
 # Elevator
 ## Unofficial Update by Immeline
-### Fixed to compile and load on Stardew Valley 1.6 and SMAPI 4.08, not tested yet.
+### Fixed to compile and load on Stardew Valley 1.6 and SMAPI 4.08, tested with the console commands for spawning hotel, adding existing cabins, and successfully adds new empty cabins.
 
 ![Hotel image](https://dl.dropboxusercontent.com/s/jvfdw477hvbd2eb/Hotel3.png)
 
